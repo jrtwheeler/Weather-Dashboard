@@ -31,23 +31,19 @@
     </nav>
 
     <div class="row">
-        <div class="card" style="width: 18rem;">
-            <div class="card-body mx-auto">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="basic-addon1"><i class="fas fa-city"></i>
-                      </span>
-                    </div>
-                    <input class="form-control" placeholder="City">
-                  </div>
-              <div class="list-group" id="list-tab" role="tablist">
-                <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Home</a>
-                <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Profile</a>
-                <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Messages</a>
-                <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Settings</a>
-              </div>
+          <div class="col-4 bg-light">
+            <p class="search-header my-1">Search for a city</p>
+            <div class="input-group mb-3">
+                <input id="city-input" type="text" class="form-control" placeholder="Enter city name" aria-label="Enter city name">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" id="search-button">
+                        <i class="fas fa-city"></i>
+                    </button>
+                </div>
             </div>
-          </div>
+            <button class="btn btn-primary mb-3" type="button" id="clear-history">Clear history</button>
+            <form id="history"></form>
+        </div>
 
 
     <script
