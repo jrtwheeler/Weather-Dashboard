@@ -1,5 +1,6 @@
 var city = $(".form-control").val();
 var searchButton = $(".input-group-prepend");
+var key = "9d93230f3ad2bc78a7973c5234d7ba2e"
 
 searchButton.on("click", search_and_save);
 
@@ -15,3 +16,14 @@ function saveLocal(key, search) {
 function getLocal(key) {
   return JSON.parse(localStorage.getItem(key)) || {};
 }
+
+var url = "https://api.openweathermap.org/data/2.5/forecast?q=London&appid=" + key;
+
+  $.ajax({
+    url: url,
+    method: "GET",
+  }).then(function (response) {
+    //Return the results in an object
+    var result = response;
+    console.log(result)
+  });
