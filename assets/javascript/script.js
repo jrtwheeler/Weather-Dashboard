@@ -1,8 +1,17 @@
 var city = $("#city-input");
 var city_list = $(".input-list");
-var card_header = $(".card-title")
+var card_header = $(".card-title");
 var searchButton = $("#search-button");
 var clearButton = $("#clear-button");
+var temperature = $(".temperature");
+var humidity = $(".humidity");
+var wind_speed = $(".wind-speed");
+var uv_index = $(".uv-index");
+var date_div = $(".date");
+var date = moment().get("date");
+var month = moment().get("month");
+var time = parseInt(moment().format("H"));
+var card_date = date_div.val(time);
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
 
 function renderRows() {
@@ -41,7 +50,11 @@ function search_and_save() {
       //Return the results in an object
       var result = response;
       console.log(result);
-      card_header.text(result.city.name)
+      card_header.text(result.city.name);
+      temperature.text("Temperature: " + result.list[0].main.temp);
+      humidity.text("Humidity: " + result.list[0].main.humidity + "%");
+      wind_speed.text("Wind Speed: " + result.list[0].wind.speed + "mph");
+      //uv_index.text("UV Index: " + (result.list[0].main);
     });
   }
 }
