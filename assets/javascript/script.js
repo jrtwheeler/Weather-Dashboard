@@ -1,5 +1,6 @@
 var city = $("#city-input");
 var city_list = $(".input-list");
+var card_header = $(".card-title")
 var searchButton = $("#search-button");
 var clearButton = $("#clear-button");
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
@@ -40,6 +41,7 @@ function search_and_save() {
       //Return the results in an object
       var result = response;
       console.log(result);
+      card_header.text(result.city.name)
     });
   }
 }
