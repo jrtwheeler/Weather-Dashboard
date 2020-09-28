@@ -15,7 +15,7 @@ var displayTime = moment().format("dddd, MMMM Do");
 var date_div_text = date_div.text(displayTime);
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
 
-console.log($(this))
+console.log($(this));
 
 function renderRows() {
   var city_list_group = $("<UL>");
@@ -55,13 +55,30 @@ function search_and_save() {
       card_header.text(result.city.name);
       var icon = result.list[0].weather[0].icon;
       var description = result.list[0].weather[0].description;
-      var farenheight = Math.floor(parseInt(result.list[0].main.temp) * 9/5 - 459.67);
-      weather_img.attr("src", "http://openweathermap.org/img/wn/" + icon + "@2x.png");
+      var farenheight = Math.floor(
+        (parseInt(result.list[0].main.temp) * 9) / 5 - 459.67
+      );
+      weather_img.attr(
+        "src",
+        "http://openweathermap.org/img/wn/" + icon + "@2x.png"
+      );
       weather_img.attr("alt", description);
       temperature.text("Temperature: " + farenheight + "°F");
       humidity.text("Humidity: " + result.list[0].main.humidity + "%");
       wind_speed.text("Wind Speed: " + result.list[0].wind.speed + "mph");
       //uv_index.text("UV Index: " + (result.list[0].main);
+      var forecast_url =
+        "https://api.openweathermap.org/data/2.5/forecast?q=" +
+        getLocal("city") +
+        "&appid=" +
+        key;
+        $.ajax({
+          url: url,
+          method: "GET",
+        }).then(function (response) {
+        
+        });
+        
     });
   }
 }
