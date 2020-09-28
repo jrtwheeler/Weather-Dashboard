@@ -7,12 +7,14 @@ var temperature = $(".temperature");
 var humidity = $(".humidity");
 var wind_speed = $(".wind-speed");
 var uv_index = $(".uv-index");
-var date_div = $(".date");
 var date = moment().get("date");
 var month = moment().get("month");
-var time = parseInt(moment().format("H"));
-var card_date = date_div.val(time);
+var date_div = $(".date");
+var displayTime = moment().format("dddd, MMMM Do");
+var date_div_text = date_div.text(displayTime);
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
+
+console.log($(this))
 
 function renderRows() {
   var city_list_group = $("<UL>");
