@@ -1,11 +1,12 @@
 var city = $("#city-input");
 var city_list = $(".input-list");
-var card_header = $(".card-title");
+var card_header = $(".city");
 var searchButton = $("#search-button");
 var clearButton = $("#clear-button");
 var temperature = $(".temperature");
 var humidity = $(".humidity");
 var wind_speed = $(".wind-speed");
+var weather_img = $(".weather-image");
 var uv_index = $(".uv-index");
 var date = moment().get("date");
 var month = moment().get("month");
@@ -44,7 +45,6 @@ function search_and_save() {
       getLocal("city") +
       "&appid=" +
       key;
-    alert(url);
     $.ajax({
       url: url,
       method: "GET",
@@ -53,7 +53,12 @@ function search_and_save() {
       var result = response;
       console.log(result);
       card_header.text(result.city.name);
-      temperature.text("Temperature: " + result.list[0].main.temp);
+      var icon = result.list[0].weather[0].icon;
+      var description = result.list[0].weather[0].description;
+      var farenheight = Math.floor(parseInt(result.list[0].main.temp) * 9/5 - 459.67);
+      weather_img.attr("src", "http://openweathermap.org/img/wn/" + icon + "@2x.png");
+      weather_img.attr("alt", description);
+      temperature.text("Temperature: " + farenheight + "°F");
       humidity.text("Humidity: " + result.list[0].main.humidity + "%");
       wind_speed.text("Wind Speed: " + result.list[0].wind.speed + "mph");
       //uv_index.text("UV Index: " + (result.list[0].main);
