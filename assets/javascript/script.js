@@ -8,6 +8,8 @@ var humidity = $(".humidity");
 var wind_speed = $(".wind-speed");
 var weather_img = $(".weather-image");
 var uv_index = $(".uv-index");
+var daily_forecast_card = $(".daily-forecast-cards");
+var forecast_cards = $(".forecast-cards");
 var date = moment().get("date");
 var month = moment().get("month");
 var date_div = $(".date");
@@ -19,8 +21,10 @@ var second_forecast = $(".two");
 var third_forecast = $(".three");
 var fourth_forecast = $(".four");
 var fifth_forecast = $(".five");
-
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
+
+daily_forecast_card.hide();
+forecast_cards.hide();
 
 function renderRows() {
   var city_list_group = $("<UL>");
@@ -40,6 +44,8 @@ function getLocal(key) {
 }
 
 function search_and_save() {
+  daily_forecast_card.show();
+  forecast_cards.show();
   var cityinput = city.val();
   saveLocal("city", cityinput);
   renderRows();
@@ -90,9 +96,7 @@ function forecast() {
     var forecast_icon = reply_object.weather[0].icon;
     var temp_val = reply_object.main.temp;
     var humidity_val = reply_object.main.humidity;
-    var farenheight = Math.floor(
-      (parseInt(temp_val) * 9) / 5 - 459.67
-    );
+    var farenheight = Math.floor((parseInt(temp_val) * 9) / 5 - 459.67);
 
     forecastCards(1, first_forecast, forecast_icon, farenheight, humidity_val);
     forecastCards(2, second_forecast, forecast_icon, farenheight, humidity_val);
