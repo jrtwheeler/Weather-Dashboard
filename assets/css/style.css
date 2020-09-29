@@ -1,4 +1,13 @@
-.navbar {
+.navbar, .one, .two, .three, .four, .five {
     background-color: navy;
-    color: seashell;
+    color: seashell;    
+}
+
+.one, .two, .three, .four, .five {
+    border-radius: 15px;
+    font-size: x-small;
+}
+
+.forecast-cards {
+    font-size: small;
 }
