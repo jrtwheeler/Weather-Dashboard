@@ -29,7 +29,6 @@ var date_div_text = date_div.text(displayTime);
 //API Key for Weather
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
 
-
 //If the local storage search history is cleared, cityinput field is set to "Enter city name", else cityinput is set to last searched name
 if (!JSON.parse(localStorage.getItem("city"))) {
   cityinput = "Enter city name";
@@ -59,7 +58,7 @@ function renderRows() {
     .text(getLocal("city"));
   //The button is appended to the city_list div
   city_list.append(city_list_item);
-  //When the button is clicked ...   
+  //When the button is clicked ...
   city_list_item.on("click", function () {
     //it returns and locally saves the button text as the new city variable for the api call ...
     cityinput = city_list_item.text();
@@ -80,6 +79,10 @@ function ajax_calls() {
     method: "GET",
   }).then(function (response) {
     //Return the results in an object
+
+    var lat = response.city.coord.lat;
+    var long = response.city.coord.lon;
+
     var result = response;
     card_header.text(result.city.name);
     var icon = result.list[0].weather[0].icon;
@@ -95,7 +98,19 @@ function ajax_calls() {
     temperature.text("Temperature: " + farenheight + "°F");
     humidity.text("Humidity: " + result.list[0].main.humidity + "%");
     wind_speed.text("Wind Speed: " + result.list[0].wind.speed + "mph");
-    //uv_index.text("UV Index: " + (result.list[0].main);
+    var kelvin_url =
+      "http://api.openweathermap.org/data/2.5/uvi?lat=" +
+      lat +
+      "&lon=" +
+      long +
+      "&appid=" +
+      key;
+      $.ajax({
+        url: kelvin_url,
+        method: "GET",
+      }).then(function (response) {
+        uv_index.text("UV Index: " + response.value);
+      })
     forecast();
   });
 }
@@ -120,10 +135,10 @@ function forecast() {
 
 function forecastCards(date, div, reply, num) {
   var reply_object = reply.list[num];
-    var forecast_icon = reply_object.weather[0].icon;
-    var temp_val = reply_object.main.temp;
-    var humidity_val = reply_object.main.humidity;
-    var farenheight = Math.floor((parseInt(temp_val) * 9) / 5 - 459.67);
+  var forecast_icon = reply_object.weather[0].icon;
+  var temp_val = reply_object.main.temp;
+  var humidity_val = reply_object.main.humidity;
+  var farenheight = Math.floor((parseInt(temp_val) * 9) / 5 - 459.67);
   div.text("");
   var later_date = moment().add(date, "day").format("dddd, MMMM Do");
   var header = $("<div>")
