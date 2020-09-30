@@ -156,7 +156,7 @@ function forecastCards(date, div, reply, num) {
   div.append(header);
   var icon_img = $("<img>").attr(
     "src",
-    "http://openweathermap.org/img/wn/" + forecast_icon + "@2x.png"
+    "https://openweathermap.org/img/wn/" + forecast_icon + "@2x.png"
   );
   var temp = $("<p>").text("Temperature: " + farenheight + "°F");
   var humidity = $("<p>").text("Humidity: " + humidity_val + "%");
