@@ -29,6 +29,7 @@ var date_div_text = date_div.text(displayTime);
 //API Key for Weather
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
 
+
 //If the local storage search history is cleared, cityinput field is set to "Enter city name", else cityinput is set to last searched name
 if (!JSON.parse(localStorage.getItem("city"))) {
   cityinput = "Enter city name";
@@ -109,21 +110,20 @@ function forecast() {
     url: forecast_url,
     method: "GET",
   }).then(function (reply) {
-    var reply_object = reply.list[0];
+    forecastCards(1, first_forecast, reply, 0);
+    forecastCards(2, second_forecast, reply, 8);
+    forecastCards(3, third_forecast, reply, 16);
+    forecastCards(4, fourth_forecast, reply, 24);
+    forecastCards(5, fifth_forecast, reply, 32);
+  });
+}
+
+function forecastCards(date, div, reply, num) {
+  var reply_object = reply.list[num];
     var forecast_icon = reply_object.weather[0].icon;
     var temp_val = reply_object.main.temp;
     var humidity_val = reply_object.main.humidity;
     var farenheight = Math.floor((parseInt(temp_val) * 9) / 5 - 459.67);
-
-    forecastCards(1, first_forecast, forecast_icon, farenheight, humidity_val);
-    forecastCards(2, second_forecast, forecast_icon, farenheight, humidity_val);
-    forecastCards(3, third_forecast, forecast_icon, farenheight, humidity_val);
-    forecastCards(4, fourth_forecast, forecast_icon, farenheight, humidity_val);
-    forecastCards(5, fifth_forecast, forecast_icon, farenheight, humidity_val);
-  });
-}
-
-function forecastCards(date, div, icon, t, h) {
   div.text("");
   var later_date = moment().add(date, "day").format("dddd, MMMM Do");
   var header = $("<div>")
@@ -133,10 +133,10 @@ function forecastCards(date, div, icon, t, h) {
   div.append(header);
   var icon_img = $("<img>").attr(
     "src",
-    "http://openweathermap.org/img/wn/" + icon + "@2x.png"
+    "http://openweathermap.org/img/wn/" + forecast_icon + "@2x.png"
   );
-  var temp = $("<p>").text("Temperature: " + t + "°F");
-  var humidity = $("<p>").text("Humidity: " + h + "%");
+  var temp = $("<p>").text("Temperature: " + farenheight + "°F");
+  var humidity = $("<p>").text("Humidity: " + humidity_val + "%");
 
   div.append(icon_img);
   div.append(temp);
