@@ -99,7 +99,7 @@ function ajax_calls() {
     humidity.text("Humidity: " + result.list[0].main.humidity + "%");
     wind_speed.text("Wind Speed: " + result.list[0].wind.speed + "mph");
     var kelvin_url =
-      "http://api.openweathermap.org/data/2.5/uvi?lat=" +
+      "https://api.openweathermap.org/data/2.5/uvi?lat=" +
       lat +
       "&lon=" +
       long +
