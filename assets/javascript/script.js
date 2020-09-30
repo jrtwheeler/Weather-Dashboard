@@ -2,7 +2,8 @@
 var city = $("#city-input");
 var city_list = $(".input-list");
 var card_header = $(".city");
-var cityinput = "";
+var cityinput;
+var city_list_item;
 var searchButton = $("#search-button");
 var clearButton = $("#clear-button");
 var temperature = $(".temperature");
@@ -29,8 +30,8 @@ var date_div_text = date_div.text(displayTime);
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
 
 //If the local storage search history is cleared, cityinput field is set to "Enter city name", else cityinput is set to last searched name
-if (window.localStorage.length === 1){
-  cityinput = "Enter city name"
+if (!JSON.parse(localStorage.getItem("city"))) {
+  cityinput = "Enter city name";
 } else {
   cityinput = city.val(getLocal("city"));
 }
@@ -38,16 +39,6 @@ if (window.localStorage.length === 1){
 //Hide the daily forecast and five day forecast cards
 daily_forecast_card.hide();
 forecast_cards.hide();
-
-//This function builds the list element for each city the user enters and stores in local storage
-function renderRows() {
-  var city_list_group = $("<UL>");
-  var city_list_item = $("<LI>")
-    .addClass("list-group-item")
-    .text(getLocal("city"));
-  city_list.append(city_list_group);
-  city_list_group.append(city_list_item);
-}
 
 //This function saves a key and stringified variable to local storage
 function saveLocal(key, search) {
@@ -59,43 +50,53 @@ function getLocal(key) {
   return JSON.parse(localStorage.getItem(key)) || {};
 }
 
-function search_and_save() {
-  daily_forecast_card.show();
-  forecast_cards.show();
-  var cityinput = city.val();
-  saveLocal("city", cityinput);
-  renderRows();
+//This function builds the button list element for each city the user enters and stores in local storage
+function renderRows() {
+  //This is the button created when a user enters a name in the city-input field
+  var city_list_item = $("<button>")
+    .addClass("list-group-item m-2 col-12")
+    .text(getLocal("city"));
+  //The button is appended to the city_list div
+  city_list.append(city_list_item);
+  //When the button is clicked ...   
+  city_list_item.on("click", function () {
+    //it returns and locally saves the button text as the new city variable for the api call ...
+    cityinput = city_list_item.text();
+    saveLocal("city", cityinput);
+    //and then it calls the ajax call function
+    ajax_calls();
+  });
+}
 
-  if (getLocal(key) != "") {
-    var url =
-      "https://api.openweathermap.org/data/2.5/forecast?q=" +
-      getLocal("city") +
-      "&appid=" +
-      key;
-    $.ajax({
-      url: url,
-      method: "GET",
-    }).then(function (response) {
-      //Return the results in an object
-      var result = response;
-      card_header.text(result.city.name);
-      var icon = result.list[0].weather[0].icon;
-      var description = result.list[0].weather[0].description;
-      var farenheight = Math.floor(
-        (parseInt(result.list[0].main.temp) * 9) / 5 - 459.67
-      );
-      weather_img.attr(
-        "src",
-        "http://openweathermap.org/img/wn/" + icon + "@2x.png"
-      );
-      weather_img.attr("alt", description);
-      temperature.text("Temperature: " + farenheight + "°F");
-      humidity.text("Humidity: " + result.list[0].main.humidity + "%");
-      wind_speed.text("Wind Speed: " + result.list[0].wind.speed + "mph");
-      //uv_index.text("UV Index: " + (result.list[0].main);
-      forecast();
-    });
-  }
+function ajax_calls() {
+  var url =
+    "https://api.openweathermap.org/data/2.5/forecast?q=" +
+    getLocal("city") +
+    "&appid=" +
+    key;
+  $.ajax({
+    url: url,
+    method: "GET",
+  }).then(function (response) {
+    //Return the results in an object
+    var result = response;
+    card_header.text(result.city.name);
+    var icon = result.list[0].weather[0].icon;
+    var description = result.list[0].weather[0].description;
+    var farenheight = Math.floor(
+      (parseInt(result.list[0].main.temp) * 9) / 5 - 459.67
+    );
+    weather_img.attr(
+      "src",
+      "http://openweathermap.org/img/wn/" + icon + "@2x.png"
+    );
+    weather_img.attr("alt", description);
+    temperature.text("Temperature: " + farenheight + "°F");
+    humidity.text("Humidity: " + result.list[0].main.humidity + "%");
+    wind_speed.text("Wind Speed: " + result.list[0].wind.speed + "mph");
+    //uv_index.text("UV Index: " + (result.list[0].main);
+    forecast();
+  });
 }
 
 function forecast() {
@@ -142,6 +143,17 @@ function forecastCards(date, div, icon, t, h) {
   div.append(humidity);
 }
 
+//This function gathers function calls for the search button event listener
+function search_and_save() {
+  daily_forecast_card.show();
+  forecast_cards.show();
+  cityinput = city.val();
+  saveLocal("city", cityinput);
+  renderRows();
+  ajax_calls();
+}
+
+//This function clears the search history and resets the page
 function clear() {
   var cityinput = "";
   saveLocal("city", cityinput);
@@ -150,4 +162,3 @@ function clear() {
 
 searchButton.on("click", search_and_save);
 clearButton.on("click", clear);
-city_list_item.on("click", function (){alert("Working")});
