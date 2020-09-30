@@ -92,7 +92,7 @@ function ajax_calls() {
     );
     weather_img.attr(
       "src",
-      "http://openweathermap.org/img/wn/" + icon + "@2x.png"
+      "https://openweathermap.org/img/wn/" + icon + "@2x.png"
     );
     weather_img.attr("alt", description);
     temperature.text("Temperature: " + farenheight + "°F");
