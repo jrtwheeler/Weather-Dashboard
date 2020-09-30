@@ -105,12 +105,20 @@ function ajax_calls() {
       long +
       "&appid=" +
       key;
-      $.ajax({
-        url: kelvin_url,
-        method: "GET",
-      }).then(function (response) {
-        uv_index.text("UV Index: " + response.value);
-      })
+    $.ajax({
+      url: kelvin_url,
+      method: "GET",
+    }).then(function (response) {
+      if (parseInt(response.value) <= 2) {
+        uv_index.text("UV Index: " + response.value).css("color", "green");
+      }
+      if (parseInt(response.value) <= 5 && parseInt(response.value) > 2) {
+        uv_index.text("UV Index: " + response.value).css("color", "orange");
+      }
+      if (parseInt(response.value) > 6) {
+        uv_index.text("UV Index: " + response.value).css("color", "red");
+      }
+    });
     forecast();
   });
 }
