@@ -2,6 +2,8 @@
 var city = $("#city-input");
 var city_list = $(".input-list");
 var card_header = $(".city");
+var cityinput;
+var city_list_item;
 var searchButton = $("#search-button");
 var clearButton = $("#clear-button");
 var temperature = $(".temperature");
@@ -27,114 +29,104 @@ var date_div_text = date_div.text(displayTime);
 //API Key for Weather
 var key = "9d93230f3ad2bc78a7973c5234d7ba2e";
 
-var cityinput = getHistory();
-
-if (cityinput.length) {
-  renderRows();
+//If the local storage search history is cleared, cityinput field is set to "Enter city name", else cityinput is set to last searched name
+if (!JSON.parse(localStorage.getItem("city"))) {
+  cityinput = "Enter city name";
 } else {
-  //Hide the daily forecast and five day forecast cards
-  daily_forecast_card.hide();
-  forecast_cards.hide();
+  cityinput = city.val(getLocal("city"));
 }
 
-function setHistory() {
-  if (cityinput.length) renderRows();
-  localStorage.setItem("city_list", JSON.stringify(cityinput));
+//Hide the daily forecast and five day forecast cards
+daily_forecast_card.hide();
+forecast_cards.hide();
+
+//This function saves a key and stringified variable to local storage
+function saveLocal(key, search) {
+  localStorage.setItem(key, JSON.stringify(search));
 }
-function getHistory() {
-  return JSON.parse(localStorage.getItem("city_list")) || [];
+
+//This function returns a value from a key in local storage
+function getLocal(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
 }
 
 //This function builds the button list element for each city the user enters and stores in local storage
 function renderRows() {
-  ajax_calls(cityinput[0]);
-  city_list.empty();
-  for (var city of cityinput) {
-    //This is the button created when a user enters a name in the city-input field
-    var city_list_item = $("<button>")
-      .addClass("list-group-item m-2 col-12")
-      .click(searchOnClick)
-      .text(city);
-    //The button is appended to the city_list div
-    city_list.append(city_list_item);
-  }
+  //This is the button created when a user enters a name in the city-input field
+  var city_list_item = $("<button>")
+    .addClass("list-group-item m-2 col-12")
+    .text(getLocal("city"));
+  //The button is appended to the city_list div
+  city_list.prepend(city_list_item);
+  //When the button is clicked ...
+  city_list_item.on("click", function () {
+    //it returns and locally saves the button text as the new city variable for the api call ...
+    cityinput = city_list_item.text();
+    saveLocal("city", cityinput);
+    //and then it calls the ajax call function
+    ajax_calls();
+  });
 }
 
-function searchOnClick() {
-  //and then it calls the ajax call function
-  var index = cityinput.indexOf($(this).text());
-  if (index) {
-    cityinput.splice(index, 1);
-    cityinput.unshift(clicked);
-    setHistory();
-  }
-}
-
-function ajax_calls(city) {
-  getWeather(city);
-  getForecast(city);
-}
-
-function getWeather(city) {
+function ajax_calls() {
   var url =
-    "https://api.openweathermap.org/data/2.5/weather?q=" +
-    city +
+    "https://api.openweathermap.org/data/2.5/forecast?q=" +
+    getLocal("city") +
     "&appid=" +
     key;
   $.ajax({
     url: url,
     method: "GET",
   }).then(function (response) {
-    console.log(response);
     //Return the results in an object
 
-    var lat = response.coord.lat;
-    var lon = response.coord.lon;
-    getUVI(lat, lon);
+    var lat = response.city.coord.lat;
+    var long = response.city.coord.lon;
 
-    card_header.text(response.name);
-    var icon = response.weather[0].icon;
-    var description = response.weather[0].description;
+    var result = response;
+    card_header.text(result.city.name);
+    var icon = result.list[0].weather[0].icon;
+    var description = result.list[0].weather[0].description;
     var farenheight = Math.floor(
-       (parseInt(response.main.temp) * 9) / 5 - 459.67
+      (parseInt(result.list[0].main.temp) * 9) / 5 - 459.67
     );
     weather_img.attr(
-       "src",
-       "https://openweathermap.org/img/wn/" + icon + "@2x.png"
-     );
-     weather_img.attr("alt", description);
-     temperature.text("Temperature: " + farenheight + "°F");
-     humidity.text("Humidity: " + response.main.humidity + "%");
-     wind_speed.text("Wind Speed: " + response.wind.speed + "mph");
+      "src",
+      "https://openweathermap.org/img/wn/" + icon + "@2x.png"
+    );
+    weather_img.attr("alt", description);
+    temperature.text("Temperature: " + farenheight + "°F");
+    humidity.text("Humidity: " + result.list[0].main.humidity + "%");
+    wind_speed.text("Wind Speed: " + result.list[0].wind.speed + "mph");
+    var kelvin_url =
+      "https://api.openweathermap.org/data/2.5/uvi?lat=" +
+      lat +
+      "&lon=" +
+      long +
+      "&appid=" +
+      key;
+    $.ajax({
+      url: kelvin_url,
+      method: "GET",
+    }).then(function (response) {
+      if (parseInt(response.value) <= 2) {
+        uv_index.text("UV Index: " + response.value).css("color", "green");
+      }
+      if (parseInt(response.value) <= 5 && parseInt(response.value) > 2) {
+        uv_index.text("UV Index: " + response.value).css("color", "orange");
+      }
+      if (parseInt(response.value) > 6) {
+        uv_index.text("UV Index: " + response.value).css("color", "red");
+      }
+    });
+    forecast();
   });
 }
-function getUVI(lat, lon) {
-  var kelvin_url =
-    "https://api.openweathermap.org/data/2.5/uvi?lat=" +
-    lat +
-    "&lon=" +
-    lon +
-    "&appid=" +
-    key;
-  $.ajax({
-    url: kelvin_url,
-    method: "GET",
-  }).then(function (response) {
-    if (parseInt(response.value) <= 2) {
-      uv_index.text("UV Index: " + response.value).css("color", "green");
-    }
-    if (parseInt(response.value) <= 5 && parseInt(response.value) > 2) {
-      uv_index.text("UV Index: " + response.value).css("color", "orange");
-    }
-    if (parseInt(response.value) > 6) {
-      uv_index.text("UV Index: " + response.value).css("color", "red");
-    }
-  });
-}
-function getForecast(city) {
+
+function forecast() {
   var forecast_url =
     "https://api.openweathermap.org/data/2.5/forecast?q=" +
-    city +
+    getLocal("city") +
     "&appid=" +
     key;
   $.ajax({
@@ -148,6 +140,7 @@ function getForecast(city) {
     forecastCards(5, fifth_forecast, reply, 32);
   });
 }
+
 function forecastCards(date, div, reply, num) {
   var reply_object = reply.list[num];
   var forecast_icon = reply_object.weather[0].icon;
@@ -177,16 +170,16 @@ function forecastCards(date, div, reply, num) {
 function search_and_save() {
   daily_forecast_card.show();
   forecast_cards.show();
-
-  var searchCity = city.val();
-  cityinput.unshift(searchCity);
-  setHistory();
+  cityinput = city.val();
+  saveLocal("city", cityinput);
+  renderRows();
+  ajax_calls();
 }
 
 //This function clears the search history and resets the page
 function clear() {
   var cityinput = "";
-  localStorage.removeItem("city_list");
+  saveLocal("city", cityinput);
   location.reload();
 }
 
