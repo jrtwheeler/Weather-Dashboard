@@ -21,8 +21,8 @@ To return a five day forecast, enter a city in the search bar and then click the
 * Bootstrap
 * Bulma
 * API
-* https://www.themealdb.com/api
-* https://www.thecocktaildb.com/api
+* https://api.openweathermap.org/data/2.5/forecast
+* https://openweathermap.org/img/wn/
 * AJAX calls
   ## Questions
   If you have any further questions, please contact me at jwheele1@gmail.com.
