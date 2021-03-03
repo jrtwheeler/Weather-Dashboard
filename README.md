@@ -14,7 +14,7 @@
 To return a five day forecast, enter a city in the search bar and then click the search button. The forecast includes temperature, humidity, wind speed, UV index, and a graphic for the weather. The app saves the cities entered in the search form.
  ![Web page](assets/images/Weather_Dashboard.png)
   ## Technologies
-* Javascript
+* JavaScript
 * JQUERY
 * CSS
 * HTML
